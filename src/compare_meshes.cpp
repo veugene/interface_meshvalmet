@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include <vtkGenericDataObjectReader.h>
+#include <vtkXMLPolyDataReader.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataWriter.h>
 
@@ -21,14 +22,15 @@ int main(int argc, char** argv)
   if( argc != 3 )
   {
     std::cerr << "Usage: " << std::endl;
-    std::cerr << argv[0] << " <image/mesh filename> <ground truth mesh filename>" << std::endl;
+    std::cerr << argv[0] << " <mesh filename> <ground truth image filename>" << std::endl;
+    return 1;
   }
   
   // Get mesh filename
-  std::string filename_mesh = argv[2];
+  std::string filename_mesh = argv[1];
   
   // Identify image type and load it
-  std::string filename_image = argv[1];
+  std::string filename_image = argv[2];
   
   itk::ImageIOBase::Pointer imageIO = itk::ImageIOFactory::CreateImageIO( filename_image.c_str(), itk::ImageIOFactory::ReadMode );
   imageIO->SetFileName(filename_image);
@@ -123,10 +125,12 @@ void RunCompareMeshes(std::string filename_image, std::string filename_mesh)
   vtkSmartPointer<vtkPolyData> mesh1 = itk2vtk.GetOutput();
   
   // Read mesh2 from file
-  vtkSmartPointer<vtkGenericDataObjectReader> reader1 = vtkSmartPointer<vtkGenericDataObjectReader>::New();
+//   vtkSmartPointer<vtkGenericDataObjectReader> reader1 = vtkSmartPointer<vtkGenericDataObjectReader>::New();
+  vtkSmartPointer<vtkXMLPolyDataReader> reader1 = vtkSmartPointer<vtkXMLPolyDataReader>::New();
   reader1->SetFileName( filename_mesh.c_str() );
   reader1->Update();
-  vtkSmartPointer<vtkPolyData> mesh2 = reader1->GetPolyDataOutput();
+//   vtkSmartPointer<vtkPolyData> mesh2 = reader1->GetPolyDataOutput();
+  vtkSmartPointer<vtkPolyData> mesh2 = reader1->GetOutput();
   
   // Compare meshes using MeshValmet
   CompareMeshes* cm = new CompareMeshes();
