@@ -1,9 +1,12 @@
-project(example)
+project(compare_meshes)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 
 find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
+
+find_package(ITK REQUIRED)
+include(${ITK_USE_FILE})
 
 # Include plugin headers
 include_directories(src src/wrapper)
@@ -16,8 +19,14 @@ include_directories(
   ${include_directories}
 )
 
+# Include some helpful ITK mesh processing code
+include_directories(
+  src/itkQuadEdgeMeshProcessing
+  ${include_directories}
+)
+
 set(SOURCE_FILES
-    src/example.cpp
+    src/compare_meshes.cpp
     src/wrapper/CompareMeshes.cpp
     src/wrapper/vtkPLYStreamWriter.cpp
     src/wrapper/VTK_to_MeshValmet.h
@@ -31,7 +40,8 @@ set(SOURCE_FILES
     src/MeshValmet/mesh/compute_volume_overlap.cxx
     src/MeshValmet/mesh/xalloc.cxx
     src/MeshValmet/mesh/reporting.cxx
+    src/itkQuadEdgeMeshProcessing/itkMeshTovtkPolyData.cxx
     )
 
-add_executable(example ${SOURCE_FILES})
-target_link_libraries(example ${VTK_LIBRARIES} )
+add_executable(compare_meshes ${SOURCE_FILES})
+target_link_libraries(compare_meshes ${VTK_LIBRARIES} ${ITK_LIBRARIES} )
