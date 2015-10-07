@@ -25,8 +25,7 @@ include_directories(
   ${include_directories}
 )
 
-set(SOURCE_FILES
-    src/compare_meshes.cpp
+set(SOURCE_FILES_COMMON
     src/wrapper/CompareMeshes.cpp
     src/wrapper/vtkPLYStreamWriter.cpp
     src/wrapper/VTK_to_MeshValmet.h
@@ -43,5 +42,8 @@ set(SOURCE_FILES
     src/itkQuadEdgeMeshProcessing/itkMeshTovtkPolyData.cxx
     )
 
-add_executable(compare_meshes ${SOURCE_FILES})
+add_executable(example src/example.cpp ${SOURCE_FILES_COMMON})
+target_link_libraries(example ${VTK_LIBRARIES} ${ITK_LIBRARIES} )
+    
+add_executable(compare_meshes src/compare_meshes.cpp ${SOURCE_FILES_COMMON})
 target_link_libraries(compare_meshes ${VTK_LIBRARIES} ${ITK_LIBRARIES} )
