@@ -1,6 +1,9 @@
 #ifndef VTK_to_MeshValmet_h
 #define VTK_to_MeshValmet_h
 
+// Boost (for shared pointer without c++11)
+#include <boost/shared_ptr.hpp>
+
 // Modified VTK
 #include "vtkPLYStreamWriter.h"
 
@@ -17,7 +20,12 @@
 
 #define GZ_BUF_SZ   16384
 
-model* VTK_to_MeshValmet( vtkPolyData* vtk_mesh )
+struct free_delete
+{
+    void operator()(void* x) { free(x); }
+};
+
+boost::shared_ptr<model> VTK_to_MeshValmet( vtkPolyData* vtk_mesh )
 {
   // Get the readable end of a pipe from the modified VTK PLY writer class and open it as a file
   vtkSmartPointer<vtkPLYStreamWriter> stream = vtkSmartPointer<vtkPLYStreamWriter>::New();
@@ -40,15 +48,21 @@ model* VTK_to_MeshValmet( vtkPolyData* vtk_mesh )
   data->is_binary = 0;
   
   // Read the mesh data using MeshValmet
-  model* mesh;
-  mesh = (model*)malloc(sizeof(model));
-  memset(mesh,0,sizeof(*mesh));
-  read_ply_tmesh(&mesh, data);
+  struct model* mesh_rawptr;
+  int load_success = read_ply_tmesh(&mesh_rawptr, data);   // returns a different pointer!
+  free(data);
   
   // Close the file and the pipe end
   fclose(stream_file);
   
+  // If the load failed, make an empty mesh
+  if( !load_success )
+  {
+    memset(mesh_rawptr,0,sizeof(*mesh_rawptr));
+  }
+  
   // Return the MeshValmet mesh object
+  boost::shared_ptr<model> mesh(mesh_rawptr, free_delete());
   return mesh;
 }
 

@@ -4,6 +4,9 @@
 // MeshValmet
 #include "3dmodel.h"
 
+// Boost
+#include <boost/shared_ptr.hpp>
+
 class CompareMeshes
 {
 public:
@@ -23,6 +26,7 @@ public:
   };
   
   mesh_differences GetMeshDifferences(struct model* mesh1, struct model* mesh2);
+  mesh_differences GetMeshDifferences(boost::shared_ptr<model> mesh1, boost::shared_ptr<model> mesh2);
   
 protected:
   void compute_distances(struct model* mesh1, struct model* mesh2, struct mesh_differences& diff);

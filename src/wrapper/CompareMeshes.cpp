@@ -18,6 +18,15 @@ CompareMeshes::mesh_differences CompareMeshes::GetMeshDifferences(struct model* 
 }
 
 
+CompareMeshes::mesh_differences CompareMeshes::GetMeshDifferences(boost::shared_ptr<model> mesh1, boost::shared_ptr<model> mesh2)
+{
+  struct model* mesh1_rawptr = mesh1.get();
+  struct model* mesh2_rawptr = mesh2.get();
+  mesh_differences results = GetMeshDifferences(mesh1_rawptr, mesh2_rawptr);
+  return results;
+}
+
+
 void CompareMeshes::compute_distances(struct model* mesh1, struct model* mesh2, struct mesh_differences& diff)
 {
   // Compute distances in from mesh1 to mesh2
