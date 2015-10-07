@@ -62,6 +62,12 @@ void CompareMeshes::compute_distances(struct model* mesh1, struct model* mesh2, 
                         ( stats->m1_samples*(stats->rms_dist*stats->rms_dist) + stats_rev->m1_samples*(stats_rev->rms_dist*stats_rev->rms_dist) )
                         / (stats->m1_samples+stats_rev->m1_samples)
                       );
+  
+  // Free
+  free(mesh1_err);
+  free(mesh2_err);
+  free(stats);
+  free(stats_rev);
 }
 
 
